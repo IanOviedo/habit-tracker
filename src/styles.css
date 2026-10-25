@@ -109,18 +109,21 @@ button {
 }
 
 .week-nav button {
-  width: 44px;
-  height: 44px;
+  width: 35px;
+  height: 35px;
   font-size: 18px;
   font-weight: 700;
   color: #1f2937;
   background: #ffffff;
   border: 1px solid #b8bfca;
   border-radius: 12px;
+  text-align: center center;
+  padding-bottom: 3px
 }
 
 .week-nav button:hover {
   background: #f4f5f7;
+  
 }
 
 /* <p className="week-label">{weekRange}</p> */

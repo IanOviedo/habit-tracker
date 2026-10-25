@@ -26,24 +26,32 @@ export default App;
 
 function Header() { 
     return (
-      <div>
+      <div className="header">
         <h1>Habit Tracker</h1>
+
+        <p className="counter">3 of 5 habits done today</p>
+
       </div>
     )
 }
 
 function AddHabitForm() { 
     return (
-      <div>
-        <h1>HabitGrid</h1>
-      </div>
+      <form className="add-form">
+      
+          <input type="text" value={""} onChange={""} placeholder="Add a new habit , e.g. stretch for 10 minutes"/>
+
+          <button className="btn-primary"> Add </button>
+      </form>
     )
 }
 
 function WeekNav() { 
     return (
-      <div>
-        <h1>WeekNav</h1>
+      <div className="week-nav">
+        <button> ‹  </button>
+        <p className="week-label">Oct 19 – 25, 2026</p>
+        <button>  › </button>
       </div>
     )
 }
@@ -58,6 +66,11 @@ function HabitGrid() {
         </div>
 
         <HabitRow />
+        <HabitRow />
+        <HabitRow />
+        <HabitRow />
+        <HabitRow />
+        
       </div>
     </div>
   );
@@ -67,13 +80,16 @@ function HabitRow() {
   return (
     <div className="row">
       <div className="habit-info">
-        <p className="habit-name"></p>
-        <p className="streak"></p>
+        <p className="habit-name">Working out</p>
+        <p className="streak">{"🔥"}3 day streak</p>
       </div>
 
       {/* <DayCell /> */}
 
       <button className="delete-btn">&times;</button>
     </div>
+    
   );
 }
+
+
