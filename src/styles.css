@@ -1,0 +1,296 @@
+/* ===== Reset (CSS-selector-universal + CSS-box-sizing-border-box) ===== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: #1f2937;
+  background: #f4f5f7;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
+/* ===== Contenedor principal: <div className="app"> ===== */
+.app {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 56px 24px;
+}
+
+.card {
+  width: 100%;
+  max-width: 780px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0 1px 2px rgba(16, 24, 40, 0.06), 0 8px 24px rgba(16, 24, 40, 0.08);
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ===== Header: <header className="header"> ===== */
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* <p className="counter">{doneToday} of {totalHabits} habits done today</p> */
+.counter {
+  background: #e8f5ec;
+  color: #14532d;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 8px 14px;
+  border-radius: 999px;
+}
+
+/* ===== Formulario: <form className="add-form"> ===== */
+.add-form {
+  display: flex;
+  gap: 12px;
+}
+
+.add-form input {
+  flex: 1;
+  min-width: 0;
+  height: 44px;
+  padding: 0 14px;
+  font-size: 15px;
+  font-family: inherit;
+  color: #1f2937;
+  border: 1px solid #b8bfca;
+  border-radius: 12px;
+}
+
+.add-form input:focus {
+  outline: 2px solid #15803d;
+  outline-offset: 1px;
+}
+
+/* <Button className="btn-primary"> (el que usa children) */
+.btn-primary {
+  height: 44px;
+  padding: 0 20px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #ffffff;
+  background: #15803d;
+  border: 0;
+  border-radius: 12px;
+}
+
+.btn-primary:hover {
+  filter: brightness(0.95);
+}
+
+/* ===== Navegación de semana: <div className="week-nav"> ===== */
+.week-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 16px;
+}
+
+.week-nav button {
+  width: 44px;
+  height: 44px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #1f2937;
+  background: #ffffff;
+  border: 1px solid #b8bfca;
+  border-radius: 12px;
+}
+
+.week-nav button:hover {
+  background: #f4f5f7;
+}
+
+/* <p className="week-label">{weekRange}</p> */
+.week-label {
+  min-width: 190px;
+  text-align: center;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===== Grilla: <div className="grid"> (envuelta en .grid-scroll) ===== */
+.grid-scroll {
+  overflow-x: auto;
+}
+
+.grid {
+  min-width: 660px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Cada fila (encabezado y hábitos) es un flex con gap */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 0;
+  border-top: 1px solid #e5e8ec;
+}
+
+.row-head {
+  align-items: flex-end;
+  padding: 0 0 8px;
+  border-top: 0;
+}
+
+/* Primera columna: nombre + racha */
+.habit-info {
+  flex: 1.6;
+  min-width: 150px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.habit-name {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.head-label {
+  flex: 1.6;
+  min-width: 150px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #5b6472;
+}
+
+/* <p className="streak">🔥 {streak} day streak</p> */
+.streak {
+  font-size: 13px;
+  font-weight: 600;
+  color: #9a3412;
+}
+
+/* ===== Encabezado de días: <div className={`day ${isToday ? "today" : ""}`}> ===== */
+.day {
+  flex: 1;
+  min-width: 44px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.day-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #5b6472;
+}
+
+.day-num {
+  min-width: 28px;
+  text-align: center;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 3px 6px;
+  border-radius: 999px;
+}
+
+.day.today .day-label {
+  color: #15803d;
+}
+
+.day.today .day-num {
+  color: #ffffff;
+  background: #15803d;
+  font-weight: 700;
+}
+
+/* ===== Celdas: className={`cell ${status}`} ===== */
+/* El contenedor de cada celda ocupa el mismo ancho que su .day */
+.cell-wrap {
+  flex: 1;
+  min-width: 44px;
+  display: flex;
+  justify-content: center;
+}
+
+/* Estado base = pendiente de un día pasado */
+.cell {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  background: #ffffff;
+  border: 2px solid #b8bfca;
+  border-radius: 12px;
+}
+
+/* hecha: <button className="cell done">✓</button> */
+.cell.done {
+  background: #15803d;
+  border-color: #15803d;
+}
+
+/* hoy sin marcar: <button className="cell today"></button> */
+.cell.today {
+  background: #e8f5ec;
+  border-color: #15803d;
+}
+
+/* hoy y hecha: el verde sólido gana (va después en el archivo) */
+.cell.today.done {
+  background: #15803d;
+}
+
+/* futura: <button className="cell future" disabled></button> */
+.cell.future {
+  background: #f4f5f7;
+  border: 2px dashed #d3d8df;
+  cursor: not-allowed;
+}
+
+/* ===== Borrar: <button className="delete-btn">&times;</button> ===== */
+.delete-btn {
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  font-size: 22px;
+  color: #5b6472;
+  background: transparent;
+  border: 0;
+  border-radius: 12px;
+}
+
+.delete-btn:hover {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+/* ===== Lista vacía (early return): <p className="empty"> ===== */
+.empty {
+  text-align: center;
+  padding: 32px 0;
+  color: #5b6472;
+  font-size: 15px;
+}
