@@ -57,28 +57,65 @@ function getStreak(doneDates) {
 
 
 function App() {
-
-
-
-  
+  const [habits, setHabits] = useState([
+    { id: 1, name: "Exercise", doneDates: [] },
+    { id: 2, name: "Read 20 pages", doneDates: [] },
+    { id: 3, name: "Study React", doneDates: [] },
+  ]);
+  const [weekOffset, setWeekOffset] = useState(0);
+ 
+  // Derived state
+  const todayKey = toKey(new Date());
+  const weekDays = getWeekDays(weekOffset);
+  const weekRange = getWeekRange(weekOffset);
+  const totalHabits = habits.length;
+  const doneToday = habits.filter((h) => h.doneDates.includes(todayKey)).length;
+ 
+  function handleAddHabit(name) {
+    setHabits((habits) => [...habits, { id: Date.now(), name, doneDates: [] }]);
+  }
+ 
+  function handleToggleDay(id, dateKey) {
+    setHabits((habits) =>
+      habits.map((habit) =>
+        habit.id === id
+          ? {
+              ...habit,
+              doneDates: habit.doneDates.includes(dateKey)
+                ? habit.doneDates.filter((d) => d !== dateKey)
+                : [...habit.doneDates, dateKey],
+            }
+          : habit
+      )
+    );
+  }
+ 
+  function handleDeleteHabit(id) {
+    setHabits((habits) => habits.filter((habit) => habit.id !== id));
+  }
+ 
   return (
-    <div className="app" >
+    <div className="app">
       <div className="card">
-        <Header/> 
-      <AddHabitForm/>
-
-        {/* <Button>Button</Button> */}
-
-      <WeekNav/>
-        <HabitGrid/>
-            {/* <DayCell/>  */}
+        <Header doneToday={doneToday} totalHabits={totalHabits} />
+        <AddHabitForm onAddHabit={handleAddHabit} />
+        <WeekNav
+          weekRange={weekRange}
+          onPrevWeek={() => setWeekOffset((w) => w - 1)}
+          onNextWeek={() => setWeekOffset((w) => w + 1)}
+        />
+        <HabitGrid
+          habits={habits}
+          weekDays={weekDays}
+          todayKey={todayKey}
+          onToggleDay={handleToggleDay}
+          onDeleteHabit={handleDeleteHabit}
+        />
       </div>
-      
-
     </div>
   );
 }
-
+ 
 export default App;
 
 
