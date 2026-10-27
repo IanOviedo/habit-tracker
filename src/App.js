@@ -120,123 +120,275 @@ export default App;
 
 
 
-function Header() { 
-    return (
-      <div className="header">
-        <h1>Habit Tracker</h1>
 
-        <p className="counter">3 of 5 habits done today</p>
-
-      </div>
-    )
+function Header({ doneToday, totalHabits }) {
+  return (
+    <div className="header">
+      <h1>Habit Tracker</h1>
+      <p className="counter">
+        {doneToday} of {totalHabits} habits done today
+      </p>
+    </div>
+  );
 }
-
-function AddHabitForm() { 
-    return (
-      <form className="add-form">
-      
-          <input type="text" value={""} onChange={""} placeholder="Add a new habit , e.g. stretch for 10 minutes"/>
-
-          <button className="btn-primary"> Add </button>
-      </form>
-    )
+ 
+function Button({ children, className, onClick }) {
+  return (
+    <button className={className} onClick={onClick}>
+      {children}
+    </button>
+  );
 }
-
-function WeekNav() { 
-    return (
-      <div className="week-nav">
-        <button> ‹  </button>
-        <p className="week-label">Oct 19 – 25, 2026</p>
-        <button>  › </button>
-      </div>
-    )
+ 
+function AddHabitForm({ onAddHabit }) {
+  const [name, setName] = useState("");
+ 
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAddHabit(name.trim());
+    setName("");
+  }
+ 
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Add a new habit, e.g. Stretch for 10 minutes"
+      />
+      <Button className="btn-primary">Add</Button>
+    </form>
+  );
 }
-
-
-function HabitGrid() {
+ 
+function WeekNav({ weekRange, onPrevWeek, onNextWeek }) {
+  return (
+    <div className="week-nav">
+      <button onClick={onPrevWeek}>‹</button>
+      <p className="week-label">{weekRange}</p>
+      <button onClick={onNextWeek}>›</button>
+    </div>
+  );
+}
+ 
+function HabitGrid({ habits, weekDays, todayKey, onToggleDay, onDeleteHabit }) {
+  if (habits.length === 0) {
+    return <p className="empty">No habits yet. Add your first one above.</p>;
+  }
+ 
   return (
     <div className="grid-scroll">
-
       <div className="grid">
-
-
-<div className="row row-head">
-  <div className="head-label">Habit</div>
-
-  <div className="day">
-    <span className="day-label">Mon</span>
-    <span className="day-num">19</span>
-  </div>
-
-  <div className="day">
-    <span className="day-label">Tue</span>
-    <span className="day-num">19</span>
-  </div>
-
-  <div className="day">
-    <span className="day-label">Wed</span>
-    <span className="day-num">19</span>
-  </div>
-
-  <div className="day">
-    <span className="day-label">Thu</span>
-    <span className="day-num">19</span>
-  </div>
-
-  <div className="day">
-    <span className="day-label">Fri</span>
-    <span className="day-num">19</span>
-  </div>
-  {/* Tue, Wed, Thu, Fri */}
-  <div className="day">
-    <span className="day-label">Sat</span>
-    <span className="day-num">24</span>
-  </div>
-  <div className="day today">
-    <span className="day-label">Sun</span>
-    <span className="day-num">25</span>
-  </div>
-
-  <div className="head-spacer"></div>
-</div>
-
-        <HabitRow />
-        <HabitRow />
-        <HabitRow />
-        <HabitRow />
-        <HabitRow />
-        
+        <div className="row row-head">
+          <div className="head-label">Habit</div>
+ 
+          {weekDays.map((day) => (
+            <div
+              key={day.key}
+              className={`day ${day.key === todayKey ? "today" : ""}`}
+            >
+              <span className="day-label">{day.label}</span>
+              <span className="day-num">{day.num}</span>
+            </div>
+          ))}
+ 
+          <div className="head-spacer"></div>
+        </div>
+ 
+        {habits.map((habit) => (
+          <HabitRow
+            key={habit.id}
+            habit={habit}
+            weekDays={weekDays}
+            todayKey={todayKey}
+            onToggleDay={onToggleDay}
+            onDeleteHabit={onDeleteHabit}
+          />
+        ))}
       </div>
     </div>
   );
 }
-
-function HabitRow() {
+ 
+function HabitRow({ habit, weekDays, todayKey, onToggleDay, onDeleteHabit }) {
+  const streak = getStreak(habit.doneDates);
+ 
   return (
     <div className="row">
       <div className="habit-info">
-        <p className="habit-name">Working out</p>
-        <p className="streak">{"🔥"}3 day streak</p>
+        <p className="habit-name">{habit.name}</p>
+        <p className="streak">🔥 {streak} day streak</p>
       </div>
-
-      <DayCell /> 
-       <DayCell /> 
-        <DayCell /> 
-         <DayCell /> 
-          <DayCell /> 
-           <DayCell /> 
-            <DayCell /> 
-
-      <button className="delete-btn">&times;</button>
+ 
+      {weekDays.map((day) => (
+        <DayCell
+          key={day.key}
+          isDone={habit.doneDates.includes(day.key)}
+          isToday={day.key === todayKey}
+          isFuture={day.key > todayKey}
+          onToggle={() => onToggleDay(habit.id, day.key)}
+        />
+      ))}
+ 
+      <button className="delete-btn" onClick={() => onDeleteHabit(habit.id)}>
+        &times;
+      </button>
     </div>
-    
   );
 }
-
-function DayCell() {
+ 
+function DayCell({ isDone, isToday, isFuture, onToggle }) {
+  let status = "";
+  if (isFuture) status = "future";
+  else if (isDone) status = "done";
+  else if (isToday) status = "today";
+ 
   return (
     <div className="cell-wrap">
-      <button className="cell done">✓</button>
+      <button
+        className={`cell ${status}`.trim()}
+        onClick={onToggle}
+        disabled={isFuture}
+      >
+        {isDone ? "✓" : ""}
+      </button>
+    </div>
+  );
+}function Header({ doneToday, totalHabits }) {
+  return (
+    <div className="header">
+      <h1>Habit Tracker</h1>
+      <p className="counter">
+        {doneToday} of {totalHabits} habits done today
+      </p>
+    </div>
+  );
+}
+ 
+function Button({ children, className, onClick }) {
+  return (
+    <button className={className} onClick={onClick}>
+      {children}
+    </button>
+  );
+}
+ 
+function AddHabitForm({ onAddHabit }) {
+  const [name, setName] = useState("");
+ 
+  function handleSubmit(e) {
+    e.preventDefault();
+    if (!name.trim()) return;
+    onAddHabit(name.trim());
+    setName("");
+  }
+ 
+  return (
+    <form className="add-form" onSubmit={handleSubmit}>
+      <input
+        type="text"
+        value={name}
+        onChange={(e) => setName(e.target.value)}
+        placeholder="Add a new habit, e.g. Stretch for 10 minutes"
+      />
+      <Button className="btn-primary">Add</Button>
+    </form>
+  );
+}
+ 
+function WeekNav({ weekRange, onPrevWeek, onNextWeek }) {
+  return (
+    <div className="week-nav">
+      <button onClick={onPrevWeek}>‹</button>
+      <p className="week-label">{weekRange}</p>
+      <button onClick={onNextWeek}>›</button>
+    </div>
+  );
+}
+ 
+function HabitGrid({ habits, weekDays, todayKey, onToggleDay, onDeleteHabit }) {
+  if (habits.length === 0) {
+    return <p className="empty">No habits yet. Add your first one above.</p>;
+  }
+ 
+  return (
+    <div className="grid-scroll">
+      <div className="grid">
+        <div className="row row-head">
+          <div className="head-label">Habit</div>
+ 
+          {weekDays.map((day) => (
+            <div
+              key={day.key}
+              className={`day ${day.key === todayKey ? "today" : ""}`}
+            >
+              <span className="day-label">{day.label}</span>
+              <span className="day-num">{day.num}</span>
+            </div>
+          ))}
+ 
+          <div className="head-spacer"></div>
+        </div>
+ 
+        {habits.map((habit) => (
+          <HabitRow
+            key={habit.id}
+            habit={habit}
+            weekDays={weekDays}
+            todayKey={todayKey}
+            onToggleDay={onToggleDay}
+            onDeleteHabit={onDeleteHabit}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+ 
+function HabitRow({ habit, weekDays, todayKey, onToggleDay, onDeleteHabit }) {
+  const streak = getStreak(habit.doneDates);
+ 
+  return (
+    <div className="row">
+      <div className="habit-info">
+        <p className="habit-name">{habit.name}</p>
+        <p className="streak">🔥 {streak} day streak</p>
+      </div>
+ 
+      {weekDays.map((day) => (
+        <DayCell
+          key={day.key}
+          isDone={habit.doneDates.includes(day.key)}
+          isToday={day.key === todayKey}
+          isFuture={day.key > todayKey}
+          onToggle={() => onToggleDay(habit.id, day.key)}
+        />
+      ))}
+ 
+      <button className="delete-btn" onClick={() => onDeleteHabit(habit.id)}>
+        &times;
+      </button>
+    </div>
+  );
+}
+ 
+function DayCell({ isDone, isToday, isFuture, onToggle }) {
+  let status = "";
+  if (isFuture) status = "future";
+  else if (isDone) status = "done";
+  else if (isToday) status = "today";
+ 
+  return (
+    <div className="cell-wrap">
+      <button
+        className={`cell ${status}`.trim()}
+        onClick={onToggle}
+        disabled={isFuture}
+      >
+        {isDone ? "✓" : ""}
+      </button>
     </div>
   );
 }
