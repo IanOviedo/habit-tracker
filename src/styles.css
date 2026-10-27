@@ -199,7 +199,7 @@ button {
   align-items: center;
   gap: 4px;
 }
-
+  
 .day-label {
   font-size: 12px;
   font-weight: 600;
@@ -296,4 +296,10 @@ button {
   padding: 32px 0;
   color: #5b6472;
   font-size: 15px;
+}
+
+
+.head-spacer {
+  width: 44px;
+  flex-shrink: 0;
 }

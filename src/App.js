@@ -1,7 +1,66 @@
+
 import { useState } from "react";
+ 
+const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+const DAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+ 
+// ===== Helpers =====
+ 
+// "YYYY-MM-DD" in local time (no toISOString, it uses UTC)
+function toKey(date) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+ 
+// The 7 days (Mon to Sun) of the visible week
+function getWeekDays(weekOffset) {
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7) + weekOffset * 7);
+ 
+  return DAY_NAMES.map((label, i) => {
+    const date = new Date(monday);
+    date.setDate(monday.getDate() + i);
+    return { label, num: date.getDate(), key: toKey(date) };
+  });
+}
+ 
+// "Oct 19 – 25, 2026"
+function getWeekRange(weekOffset) {
+  const today = new Date();
+  const monday = new Date(today);
+  monday.setDate(today.getDate() - ((today.getDay() + 6) % 7) + weekOffset * 7);
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+ 
+  const start = `${MONTHS[monday.getMonth()]} ${monday.getDate()}`;
+  const sameMonth = monday.getMonth() === sunday.getMonth();
+  const end = sameMonth ? `${sunday.getDate()}` : `${MONTHS[sunday.getMonth()]} ${sunday.getDate()}`;
+  return `${start} – ${end}, ${sunday.getFullYear()}`;
+}
+ 
+// Consecutive done days going back from today (or from yesterday if today isn't done)
+function getStreak(doneDates) {
+  const cursor = new Date();
+  if (!doneDates.includes(toKey(cursor))) {
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  let streak = 0;
+  while (doneDates.includes(toKey(cursor))) {
+    streak++;
+    cursor.setDate(cursor.getDate() - 1);
+  }
+  return streak;
+}
 
 
 function App() {
+
+
+
+  
   return (
     <div className="app" >
       <div className="card">
@@ -60,10 +119,49 @@ function WeekNav() {
 function HabitGrid() {
   return (
     <div className="grid-scroll">
+
       <div className="grid">
-        <div className="row row-head">
-          {/* aquí después: head-label y los días */}
-        </div>
+
+
+<div className="row row-head">
+  <div className="head-label">Habit</div>
+
+  <div className="day">
+    <span className="day-label">Mon</span>
+    <span className="day-num">19</span>
+  </div>
+
+  <div className="day">
+    <span className="day-label">Tue</span>
+    <span className="day-num">19</span>
+  </div>
+
+  <div className="day">
+    <span className="day-label">Wed</span>
+    <span className="day-num">19</span>
+  </div>
+
+  <div className="day">
+    <span className="day-label">Thu</span>
+    <span className="day-num">19</span>
+  </div>
+
+  <div className="day">
+    <span className="day-label">Fri</span>
+    <span className="day-num">19</span>
+  </div>
+  {/* Tue, Wed, Thu, Fri */}
+  <div className="day">
+    <span className="day-label">Sat</span>
+    <span className="day-num">24</span>
+  </div>
+  <div className="day today">
+    <span className="day-label">Sun</span>
+    <span className="day-num">25</span>
+  </div>
+
+  <div className="head-spacer"></div>
+</div>
 
         <HabitRow />
         <HabitRow />
@@ -84,7 +182,13 @@ function HabitRow() {
         <p className="streak">{"🔥"}3 day streak</p>
       </div>
 
-      {/* <DayCell /> */}
+      <DayCell /> 
+       <DayCell /> 
+        <DayCell /> 
+         <DayCell /> 
+          <DayCell /> 
+           <DayCell /> 
+            <DayCell /> 
 
       <button className="delete-btn">&times;</button>
     </div>
@@ -92,4 +196,10 @@ function HabitRow() {
   );
 }
 
-
+function DayCell() {
+  return (
+    <div className="cell-wrap">
+      <button className="cell done">✓</button>
+    </div>
+  );
+}
